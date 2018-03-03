@@ -1,5 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+<PropertyGroup>
+<TargetFramework>netstandard2.0</TargetFramework>
+</PropertyGroup>
+
+<PropertyGroup>
+<MyVersion>85</MyVersion>
+</PropertyGroup>
+
+<ItemGroup>
+<Dependency Include="*" Package="MyPackage" Project="../test.txt" Version="1.0.0" />
+<Dependency Include="*" Package="MyPackage2" Project="./Model.csproj" Version="2.0.0" />
+</ItemGroup>
+
+<Target Name="Init" BeforeTargets="build">
+<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
@@ -52,3 +68,4 @@
         </Task>
     </UsingTask>
 </Project>
+
