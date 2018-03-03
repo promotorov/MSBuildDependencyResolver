@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <MyVersion>85</MyVersion>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Dependency Include="*" Package="MyPackage" Project="../test.txt" Version="1.0.0" />
+        <Dependency Include="*" Package="MyPackage2" Project="./Model.csproj" Version="2.0.0" />
+    </ItemGroup>
+    
+    <Target Name="Init" BeforeTargets="build">
+        <Message Text="Package: %(Dependency.Package)"/>
+        <Message Text="Project: %(Dependency.Project)"/>
+        <Message Text="Version: %(Dependency.Version)"/>
+    </Target>
+    
+    <Target Name="FindProject" AfterTargets="Init" BeforeTargets="build" 
+            Outputs="%(Dependency.Project)">
+        <FindFile CurrentDirName="$(MSBuildThisFileDirectory)" 
+                  FileToFind="%(Dependency.Project)">
+            <Output PropertyName="IsLocal" TaskParameter="IsLocal" />
+        </FindFile>
+        <Message Text="%(Dependency.Project): $(IsLocal)"/>
+    </Target>
+
+    <UsingTask TaskName="FindFile" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+        <ParameterGroup>
+            <FileToFind ParameterType="System.String" Required="true" />
+            <CurrentDirName ParameterType="System.String" Required="true" />
+            <IsLocal ParameterType="System.String" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System"/>
+            <Using Namespace="System.IO"/>
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+                IsLocal = "false";
+                var correct = FileToFind.EndsWith(".csproj");
+                if (correct == true) {
+                    var path = Path.Combine(CurrentDirName, FileToFind);
+                    path = Path.GetFullPath(path);
+                    if(File.Exists(path)) 
+                         IsLocal = "true";  
+                }
+                ]]>
+            </Code>
+        </Task>
+    </UsingTask>
+</Project>
