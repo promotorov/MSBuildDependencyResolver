@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Dependency Include="*" Package="MyPackage" Project="../test.txt" Version="1.0.0" />
+    <Dependency Include="*" Package="EntityFramework" Project="../test.txt" Version="6.1.2" />
     <Dependency Include="*" Package="MyPackage2" Project="../Test/Test.csproj" Version="2.0.0" />
     <Dependency Include="*" Package="MyPackage3" Project="./Modelsds.csproj" Version="1.0.0" />
   </ItemGroup>
@@ -12,7 +12,7 @@
       <Output PropertyName="IsLocal" TaskParameter="IsLocal" />
     </FindFile>
     <Exec Command="dotnet add reference %(Dependency.Project)" Condition=" '$(IsLocal)' == 'true'" />
-    <Exec Command="dotnet add package %(Dependency.Package)" Condition=" '$(IsLocal)' == 'false'" />
+    <Exec Command="dotnet add package %(Dependency.Package) -v %(Dependency.Version)" Condition=" '$(IsLocal)' == 'false'" />
   </Target>
   <UsingTask TaskName="FindFile" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
